@@ -1,7 +1,7 @@
 import React from 'react';
 
 const HomePage = () => {
-  return <div>Hello World !</div>;
+  return <div>Test Amaçlı Yapılan değişiklik</div>;
 };
 
 export default HomePage;
