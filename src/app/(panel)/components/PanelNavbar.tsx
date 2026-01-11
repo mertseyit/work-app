@@ -9,12 +9,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Spinner } from '@/components/ui/spinner';
+import { UserButton, useUser } from '@clerk/nextjs';
+import { AvatarImage } from '@radix-ui/react-avatar';
 import { Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
-import Image from 'next/image';
 
 const PanelNavbar = ({ children }: { children: React.ReactNode }) => {
   const { setTheme } = useTheme();
+  const { isLoaded, user } = useUser();
   return (
     <nav className="flex items-center sticky top-0 w-full justify-between x-container py-2 border-b bg-accent">
       {children}
@@ -28,28 +31,8 @@ const PanelNavbar = ({ children }: { children: React.ReactNode }) => {
           <Moon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
           <span className="sr-only">Toggle theme</span>
         </Button>
-        <DropdownMenu>
-          <DropdownMenuTrigger className="rounded-full">
-            <Avatar className="rounded-full">
-              <Image
-                className="rounded-full"
-                src="/user.jpg"
-                width={60}
-                height={60}
-                alt="User Profile"
-              />
-              <AvatarFallback>CN</AvatarFallback>
-            </Avatar>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Profile</DropdownMenuItem>
-            <DropdownMenuItem>Billing</DropdownMenuItem>
-            <DropdownMenuItem>Team</DropdownMenuItem>
-            <DropdownMenuItem>Subscription</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+
+        <UserButton />
       </div>
     </nav>
   );
