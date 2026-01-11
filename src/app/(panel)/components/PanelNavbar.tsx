@@ -1,23 +1,11 @@
 'use client';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Spinner } from '@/components/ui/spinner';
-import { UserButton, useUser } from '@clerk/nextjs';
-import { AvatarImage } from '@radix-ui/react-avatar';
+import { UserButton } from '@clerk/nextjs';
 import { Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
 
 const PanelNavbar = ({ children }: { children: React.ReactNode }) => {
   const { setTheme } = useTheme();
-  const { isLoaded, user } = useUser();
   return (
     <nav className="flex items-center sticky top-0 w-full justify-between x-container py-2 border-b bg-accent">
       {children}
