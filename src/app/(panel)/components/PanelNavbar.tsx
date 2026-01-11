@@ -16,7 +16,7 @@ import Image from 'next/image';
 const PanelNavbar = ({ children }: { children: React.ReactNode }) => {
   const { setTheme } = useTheme();
   return (
-    <nav className="flex items-center w-full justify-between x-container py-2 border-b bg-accent">
+    <nav className="flex items-center sticky top-0 w-full justify-between x-container py-2 border-b bg-accent">
       {children}
       <div className="flex items-center justify-center gap-4">
         <Button

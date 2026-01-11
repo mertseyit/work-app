@@ -42,3 +42,5 @@ next-env.d.ts
 
 # others
 folder-structure.md
+
+/app/generated/prisma

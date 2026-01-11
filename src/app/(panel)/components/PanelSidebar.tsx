@@ -1,3 +1,4 @@
+'use client';
 import { BadgeTurkishLira, BriefcaseBusiness, ClipboardList } from 'lucide-react';
 
 import {
@@ -10,28 +11,31 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
+import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import { cn } from '@/lib/utils';
 
 // Menu items.
 const items = [
   {
     title: 'Finans',
-    url: '/finans',
+    url: '/finance',
     icon: BadgeTurkishLira,
   },
   {
     title: 'İş Takip',
-    url: '/is-takip',
+    url: '/work-track',
     icon: BriefcaseBusiness,
   },
   {
     title: 'Görev Listesi',
-    url: '/görev-listesi',
+    url: '/task-list',
     icon: ClipboardList,
   },
 ];
 
 const PanelSidebar = () => {
+  const pathName = usePathname();
   return (
     <Sidebar>
       <SidebarContent>
@@ -43,10 +47,16 @@ const PanelSidebar = () => {
             <SidebarMenu>
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <Link href={item.url} className="border  border-primary-brand my-1 ">
-                      <item.icon className="text-secondary-brand" />
-                      <span className="text-primary-brand text-xs font-semibold">{item.title}</span>
+                  <SidebarMenuButton
+                    asChild
+                    className={`${cn(
+                      item.url === pathName &&
+                        'border-blue-300 dark:border-blue-300/50 bg-blue-50 dark:bg-blue-400/10',
+                    )} hover:bg-blue-50 dark:hover:bg-blue-300/10 border-2 my-1 transition-all duration-150 `}
+                  >
+                    <Link href={item.url}>
+                      <item.icon />
+                      <span className=" text-xs font-semibold">{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
