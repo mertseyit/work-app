@@ -12,3 +12,38 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+// Gelir/Gider tipini Enum olarak tutmak hatayı önler
+enum TransactionType {
+  INCOME
+  EXPENSE
+}
+
+model Category {
+  id           String          @id @default(uuid()) 
+  name         String
+  color        String?        
+  type         TransactionType 
+  transactions Transaction[]   
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  @@map("categories") // Veritabanında tablo adı 'categories' olsun
+}
+
+model Transaction {
+  id          String          @id @default(uuid())
+  title       String
+  amount      Decimal         @db.Decimal(10, 2) 
+  date        DateTime
+  type        TransactionType
+  description String?
+  
+  categoryId  String
+  category    Category        @relation(fields: [categoryId], references: [id])
+
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  @@map("transactions")
+}
