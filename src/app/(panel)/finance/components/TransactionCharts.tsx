@@ -54,41 +54,47 @@ export function TransactionCharts({ lineData, pieData }: TransactionChartsProps)
       {/* --- BÖLÜM 1: AYLIK NAKİT AKIŞI (AREA CHART) --- */}
       <div>
         <h3 className="text-sm font-medium mb-4 italic text-slate-500">Aylık Nakit Akışı</h3>
-        <ChartContainer config={areaChartConfig} className="h-[200px] w-full">
-          <AreaChart
-            accessibilityLayer
-            data={lineData}
-            margin={{ left: 0, right: 0, top: 10, bottom: 0 }}
-          >
-            <CartesianGrid vertical={false} strokeDasharray="3 3" opacity={0.4} />
-            <XAxis
-              dataKey="date"
-              tickLine={false}
-              axisLine={false}
-              tickMargin={8}
-              minTickGap={30}
-            />
-            <ChartTooltip content={<ChartTooltipContent indicator="dot" />} />
-            <Area
-              dataKey="income"
-              type="monotone"
-              fill="url(#fillIncome)"
-              fillOpacity={0.4}
-              stroke="var(--color-income)"
-              strokeWidth={2}
-              stackId="1"
-            />
-            <Area
-              dataKey="expense"
-              type="monotone"
-              fill="url(#fillExpense)"
-              fillOpacity={0.4}
-              stroke="var(--color-expense)"
-              strokeWidth={2}
-              stackId="2"
-            />
-          </AreaChart>
-        </ChartContainer>
+        {lineData.length < 1 ? (
+          <p className="text-xs text-center">
+            Henüz grafik için yeterli veri yok. Lütfen kayıt oluşturmaya devam edin.
+          </p>
+        ) : (
+          <ChartContainer config={areaChartConfig} className="h-[200px] w-full">
+            <AreaChart
+              accessibilityLayer
+              data={lineData}
+              margin={{ left: 0, right: 0, top: 10, bottom: 0 }}
+            >
+              <CartesianGrid vertical={false} strokeDasharray="3 3" opacity={0.4} />
+              <XAxis
+                dataKey="date"
+                tickLine={false}
+                axisLine={false}
+                tickMargin={8}
+                minTickGap={30}
+              />
+              <ChartTooltip content={<ChartTooltipContent indicator="dot" />} />
+              <Area
+                dataKey="income"
+                type="monotone"
+                fill="url(#fillIncome)"
+                fillOpacity={0.4}
+                stroke="var(--color-income)"
+                strokeWidth={2}
+                stackId="1"
+              />
+              <Area
+                dataKey="expense"
+                type="monotone"
+                fill="url(#fillExpense)"
+                fillOpacity={0.4}
+                stroke="var(--color-expense)"
+                strokeWidth={2}
+                stackId="2"
+              />
+            </AreaChart>
+          </ChartContainer>
+        )}
       </div>
 
       {/* --- BÖLÜM 2: GİDER DAĞILIMI VE ÖZET (PIE CHART) --- */}
@@ -98,23 +104,29 @@ export function TransactionCharts({ lineData, pieData }: TransactionChartsProps)
         <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
           {/* Pie Chart Alanı */}
           <div className="flex-1 w-full max-w-[200px]">
-            <ChartContainer config={pieChartConfig} className="aspect-square w-full">
-              <PieChart>
-                <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-                <Pie
-                  data={pieData}
-                  dataKey="amount"
-                  nameKey="category"
-                  innerRadius={50} // Donut kalınlığı
-                  strokeWidth={4}
-                  paddingAngle={2}
-                >
-                  {pieData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.fill} />
-                  ))}
-                </Pie>
-              </PieChart>
-            </ChartContainer>
+            {pieData.length < 3 ? (
+              <p className="text-[10px] text-center">
+                Henüz grafik için yeterli veri yok. Lütfen kayıt oluşturama devam edin.
+              </p>
+            ) : (
+              <ChartContainer config={pieChartConfig} className="aspect-square w-full">
+                <PieChart>
+                  <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
+                  <Pie
+                    data={pieData}
+                    dataKey="amount"
+                    nameKey="category"
+                    innerRadius={50} // Donut kalınlığı
+                    strokeWidth={4}
+                    paddingAngle={2}
+                  >
+                    {pieData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.fill} />
+                    ))}
+                  </Pie>
+                </PieChart>
+              </ChartContainer>
+            )}
           </div>
 
           {/* Özet İstatistik Alanı */}
