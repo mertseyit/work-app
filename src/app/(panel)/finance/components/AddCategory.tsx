@@ -66,7 +66,9 @@ const AddCategory = () => {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           {/* İsim Alanı */}
           <div className="space-y-1">
-            <Label htmlFor="name">Kategori Adı</Label>
+            <Label className="mb-3" htmlFor="name">
+              Kategori Adı
+            </Label>
             <Input id="name" placeholder="Örn: Mutfak" {...form.register('name')} />
             {form.formState.errors.name && (
               <span className="text-xs text-red-500">{form.formState.errors.name.message}</span>
@@ -75,21 +77,20 @@ const AddCategory = () => {
 
           {/* Gelir / Gider Seçimi */}
           <div className="space-y-1">
-            <Label>Tür</Label>
             <RadioGroup
               defaultValue="EXPENSE"
               onValueChange={(value) => form.setValue('type', value as 'INCOME' | 'EXPENSE')}
               className="flex gap-4"
             >
-              <div className="flex items-center justify-start gap-2">
-                <RadioGroupItem value="INCOME" id="INCOME" />
-                <Label htmlFor="INCOME" className="text-green-600 font-bold cursor-pointer">
+              <div className="flex items-center space-x-2 border p-2 rounded-md w-full justify-center">
+                <RadioGroupItem value="INCOME" id="t-income" />
+                <Label htmlFor="t-income" className="text-green-600 font-bold cursor-pointer">
                   Gelir
                 </Label>
               </div>
-              <div className="flex items-center justify-start gap-2">
-                <RadioGroupItem value="EXPENSE" id="EXPENSE" />
-                <Label htmlFor="EXPENSE" className="text-red-600 font-bold cursor-pointer">
+              <div className="flex items-center space-x-2 border p-2 rounded-md w-full justify-center">
+                <RadioGroupItem value="EXPENSE" id="t-expense" />
+                <Label htmlFor="t-expense" className="text-red-600 font-bold cursor-pointer">
                   Gider
                 </Label>
               </div>

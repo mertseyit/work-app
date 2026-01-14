@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useTransition } from 'react';
+import { tr } from 'react-day-picker/locale';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CreateTransactionSchema, CreateTransactionSchemaType } from '@/lib/validators';
@@ -26,6 +27,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { toast } from 'sonner';
+import { Calendar } from '@/components/ui/calendar';
 
 // Bileşene prop olarak kategorileri gönderiyoruz
 interface AddNewTransactionProps {
@@ -35,7 +37,7 @@ interface AddNewTransactionProps {
 const AddNewTransaction = ({ categories }: AddNewTransactionProps) => {
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
-
+  const [date, setDate] = useState<undefined | Date>(new Date());
   const form = useForm({
     resolver: zodResolver(CreateTransactionSchema),
     defaultValues: {
@@ -43,6 +45,7 @@ const AddNewTransaction = ({ categories }: AddNewTransactionProps) => {
       amount: 0,
       type: 'EXPENSE',
       categoryId: '',
+      date: new Date(),
     },
   });
 
@@ -77,12 +80,15 @@ const AddNewTransaction = ({ categories }: AddNewTransactionProps) => {
         </Button>
       </DialogTrigger>
 
-      <DialogContent>
+      <DialogContent className="overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Yeni İşlem Oluştur</DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="flex flex-col gap-4 h-full overflow-y-auto"
+        >
           {/* Başlık */}
           <div className="space-y-1">
             <Input type="text" placeholder="Başlık (Örn: Market)" {...form.register('title')} />
@@ -113,7 +119,20 @@ const AddNewTransaction = ({ categories }: AddNewTransactionProps) => {
               </Label>
             </div>
           </RadioGroup>
-
+          <Calendar
+            locale={tr}
+            selected={date}
+            mode="single"
+            onSelect={(selected) => {
+              form.setValue('date', selected);
+              setDate(selected);
+            }}
+            className="rounded-lg border"
+            {...form.register('date')}
+          />
+          {form.formState.errors.date && (
+            <span className="text-xs text-red-500">{form.formState.errors.date.message}</span>
+          )}
           {/* Kategoriler (Filtrelenmiş) */}
           <div className="space-y-1">
             <Select

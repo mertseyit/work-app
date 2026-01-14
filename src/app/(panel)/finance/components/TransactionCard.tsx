@@ -1,5 +1,5 @@
 'use client';
-import { formatDate } from '@/app/helpers/formatDate';
+import { formatDate } from '@/helpers/formatDate';
 import {
   ContextMenu,
   ContextMenuContent,
@@ -57,7 +57,7 @@ const TransactionCard = ({ transaction }: TransactionCardProps) => {
                   {Number(transaction.amount)} ₺
                 </p>
                 <span className="italic text-[11px] text-slate-500">
-                  {formatDate(transaction.date)}
+                  {formatDate(transaction.date, 'hours')}
                 </span>
               </div>
               <div

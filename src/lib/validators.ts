@@ -14,6 +14,7 @@ export const CreateTransactionSchema = z.object({
   amount: z.coerce.number().positive({ message: "Miktar 0'dan büyük olmalı." }),
   type: z.enum(['INCOME', 'EXPENSE']),
   categoryId: z.string().min(1, { message: 'Lütfen bir kategori seçin.' }),
+  date: z.coerce.date({ error: 'Tarih seçimi zorunludur' }),
 });
 
 export type CreateCategorySchemaType = z.infer<typeof CreateCategorySchema>;

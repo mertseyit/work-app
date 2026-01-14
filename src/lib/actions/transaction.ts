@@ -16,7 +16,7 @@ export async function createTransaction(form: CreateTransactionSchemaType) {
     return { error: 'Form verileri geçersiz.' };
   }
 
-  const { title, amount, type, categoryId } = validatedFields.data;
+  const { title, amount, type, categoryId, date } = validatedFields.data;
 
   try {
     await prisma.transaction.create({
@@ -26,7 +26,7 @@ export async function createTransaction(form: CreateTransactionSchemaType) {
         amount,
         type,
         categoryId,
-        date: new Date(), // Şu anki tarih
+        date,
       },
     });
 

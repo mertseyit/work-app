@@ -10,6 +10,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import CategoryCard from './components/CategoryCard';
 import { getCategoryPieData, getMonthlyChartData } from '@/lib/chart-utils';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import TransactionFilter from './components/TransactionFilter';
+import TransactionList from './components/TransactionList';
 
 const FinansPage = async ({ searchParams }: { searchParams: { days?: string } }) => {
   const { userId } = await auth();
@@ -47,7 +49,7 @@ const FinansPage = async ({ searchParams }: { searchParams: { days?: string } })
     <div className="x-container py-3">
       <div className="grid grid-cols-3 gap-3 py-3">
         {/* last process */}
-        <Tabs defaultValue="last_transactions" className="h-full">
+        <Tabs defaultValue="last_transactions" className="h-full lg:col-span-1 col-span-3">
           <Card className="col-span-1 h-full">
             <CardHeader>
               <TabsList>
@@ -61,17 +63,7 @@ const FinansPage = async ({ searchParams }: { searchParams: { days?: string } })
                 <div className="flex items-center justify-center w-full gap-3 pb-2 mb-2 ">
                   <AddNewTransaction categories={categories} />
                 </div>
-                {listTransactions.length === 0 ? (
-                  <p className="text-center text-xs font-semibold py-3">Henüz kayıt yok</p>
-                ) : (
-                  <>
-                    <ScrollArea className="h-[500px] p-2 ">
-                      {listTransactions.map((transaction) => (
-                        <ProcessCard key={transaction.id} transaction={transaction} />
-                      ))}
-                    </ScrollArea>
-                  </>
-                )}
+                <TransactionList listTransactions={listTransactions} />
               </TabsContent>
               <TabsContent value="categories">
                 <div className="flex items-center justify-center w-full gap-3 pb-2 mb-2 ">
@@ -93,7 +85,7 @@ const FinansPage = async ({ searchParams }: { searchParams: { days?: string } })
           </Card>
         </Tabs>
 
-        <Card className="col-span-2">
+        <Card className="lg:col-span-2 col-span-">
           <CardHeader>
             <CardTitle className="text-base">İstatiksel Veriler</CardTitle>
           </CardHeader>
