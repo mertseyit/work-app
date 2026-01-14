@@ -3,7 +3,7 @@
  * @param isoDate - "2025-05-10T14:30:00Z"
  * @returns - "10/05/25 14:30:00"
  */
-export const formatDate = (isoDate: string): string => {
+export const formatDate = (isoDate: Date): string => {
   const date = new Date(isoDate);
 
   // Gün, ay, yıl kısımlarını al
