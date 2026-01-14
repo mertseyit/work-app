@@ -1,44 +1,53 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client"
-  output   = "../app/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
 }
+model User {
+  id        String   @id 
+  email     String   @unique
+  firstName String?
+  lastName  String?
+  imageUrl  String?
+  
+  transactions Transaction[] //many to many 
+  categories   Category[] //many to many 
 
-// Gelir/Gider tipini Enum olarak tutmak hatayı önler
-enum TransactionType {
-  INCOME
-  EXPENSE
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
 }
 
 model Category {
-  id           String          @id @default(uuid()) 
-  name         String
-  color        String?        
-  type         TransactionType 
-  transactions Transaction[]   
-  createdAt    DateTime        @default(now())
-  updatedAt    DateTime        @updatedAt
+  id      String          @id @default(uuid())
+  name    String
+  type    TransactionType
+  
+  userId  String
+  user    User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  transactions Transaction[] //many to many 
 
-  @@map("categories") // Veritabanında tablo adı 'categories' olsun
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("categories")
 }
 
 model Transaction {
   id          String          @id @default(uuid())
-  title       String
-  amount      Decimal         @db.Decimal(10, 2) 
-  date        DateTime
+  amount      Decimal         @db.Decimal(10, 2)
   type        TransactionType
+  date        DateTime
   description String?
-  
+  title       String
+  userId      String
+  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // İlişki: Hangi kategori?
   categoryId  String
   category    Category        @relation(fields: [categoryId], references: [id])
 
@@ -46,4 +55,10 @@ model Transaction {
   updatedAt   DateTime        @updatedAt
 
   @@map("transactions")
+}
+
+// ENUM: Sabit değerler için
+enum TransactionType {
+  INCOME
+  EXPENSE
 }
