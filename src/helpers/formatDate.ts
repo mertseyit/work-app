@@ -5,15 +5,15 @@
  */
 type FormatDateExlude = 'hours' | 'date';
 
-type FormatDate = (isoDate: string | Date, exclude?: FormatDateExlude) => string;
+type FormatDate = (isoDate: string | Date | null | undefined, exclude?: FormatDateExlude) => string;
 
 export const formatDate: FormatDate = (isoDate, exlude) => {
-  const date = new Date(isoDate);
+  const date = new Date(isoDate!);
 
   // Gün, ay, yıl kısımlarını al
   const day = String(date.getDate()).padStart(2, '0');
   const month = String(date.getMonth() + 1).padStart(2, '0');
-  const year = String(date.getFullYear()).slice(-2);
+  const year = String(date.getFullYear()).slice(-4);
 
   // Saat, dakika, saniye kısımlarını al
   const hours = String(date.getHours()).padStart(2, '0');

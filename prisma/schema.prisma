@@ -6,21 +6,24 @@ datasource db {
   provider = "postgresql"
 }
 model User {
-  id        String   @id 
-  email     String   @unique
-  firstName String?
-  lastName  String?
-  imageUrl  String?
+  id              String   @id 
+  email           String   @unique
+  firstName       String?
+  lastName        String?
+  imageUrl        String?
   
-  transactions Transaction[] //many to many 
-  categories   Category[] //many to many 
+  transactions    Transaction[] //many to many 
+  categories      Category[] //many to many 
+  clients         Client[]
+  projects        Project[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   @@map("users")
 }
 
+//İşlem kategorisi
 model Category {
   id      String          @id @default(uuid())
   name    String
@@ -37,6 +40,7 @@ model Category {
   @@map("categories")
 }
 
+//finansal yapılan işlem
 model Transaction {
   id          String          @id @default(uuid())
   amount      Decimal         @db.Decimal(10, 2)
@@ -55,6 +59,122 @@ model Transaction {
   updatedAt   DateTime        @updatedAt
 
   @@map("transactions")
+}
+
+
+
+// 1. MÜŞTERİ / KURUM (CLIENT)
+model Client {
+  id          String   @id @default(uuid())
+  name        String   // Kurum/Kişi Adı
+  description String?  // Açıklama
+  logo        String?  // Logo URL (Şimdilik null)
+  
+  // İlişkiler
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  projects    Project[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("clients")
+}
+
+// 2. PROJE (PROJECT)
+model Project {
+  id          String        @id @default(uuid())
+  name        String
+  description String?
+  
+  // Tarihler
+  startDate   DateTime      @default(now()) // Seçilmezse o anın tarihi
+  endDate     DateTime?     // Opsiyonel deadline
+  
+  // Durumlar
+  status        ProjectStatus @default(WAITING)
+  paymentStatus PaymentStatus @default(UNPAID)
+  
+  // Finansal
+  price         Decimal       @db.Decimal(10, 2)
+  
+  // Teknik
+  techStack     String[]      // Örn: ["Next.js", "Prisma", "Tailwind"]
+  category      String        // Örn: "E-Ticaret", "Kurumsal Site"
+  
+  // İlişkiler
+  clientId    String
+  client      Client        @relation(fields: [clientId], references: [id])
+  
+  userId      String
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Alt Tablolar
+  revisions   Revision[]
+  tasks       Task[]
+  //tamamen veri tutma amaçlı kullanıcı eğer isterse bir iş için totalde kaç kez meet yapmış saymak için
+  meetCount   Int?  @default(0)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@map("projects")
+}
+
+// 3. REVİZELER (REVISIONS)
+// Müşteriden gelen değişiklik istekleri
+model Revision {
+  id          String   @id @default(uuid())
+  title       String
+  description String?  // Link veya notlar buraya
+  
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("revisions")
+}
+
+model Task {
+  id          String      @id @default(uuid())
+  title       String
+  order       Int         @default(0) // Kanban'da kart sırasını tutmak için kritik!
+
+  //kanban grafik yapısı için burası TaskStatus türünde atandı.  
+  status      TaskStatus  @default(TODO) 
+  
+  projectId   String
+  project     Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@map("tasks")
+}
+
+// Kanban Sütunları için Enum
+enum TaskStatus {
+  TODO          // Yapılacaklar
+  IN_PROGRESS   // İşlemde 
+  DONE          // Tamamlandı
+}
+
+// ENUMLAR (Standart Veri İçin)
+enum ProjectStatus {
+  WAITING           // Beklemede
+  IN_PROGRESS       // Devam Ediyor
+  COMPLETED         // Tamamlandı
+  CANCELLED         // İptal
+  PAUSED            // Duraklatıldı
+  REVISION_REQUEST  // Revize Bekleniyor
+}
+
+enum PaymentStatus {
+  UNPAID    // Ödeme Bekliyor
+  PARTIAL   // Kısmi Ödeme
+  PAID      // Ödendi
 }
 
 // ENUM: Sabit değerler için

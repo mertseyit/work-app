@@ -1,6 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-import ProcessCard from './components/TransactionCard';
 import { TransactionCharts } from './components/TransactionCharts';
 import AddNewTransaction from './components/AddNewTransaction';
 import AddCategory from './components/AddCategory';
@@ -10,7 +9,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import CategoryCard from './components/CategoryCard';
 import { getCategoryPieData, getMonthlyChartData } from '@/lib/chart-utils';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import TransactionFilter from './components/TransactionFilter';
 import TransactionList from './components/TransactionList';
 
 const FinansPage = async ({ searchParams }: { searchParams: { days?: string } }) => {
@@ -85,7 +83,7 @@ const FinansPage = async ({ searchParams }: { searchParams: { days?: string } })
           </Card>
         </Tabs>
 
-        <Card className="lg:col-span-2 col-span-">
+        <Card className="lg:col-span-2 col-span-3">
           <CardHeader>
             <CardTitle className="text-base">İstatiksel Veriler</CardTitle>
           </CardHeader>

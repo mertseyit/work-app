@@ -44,3 +44,5 @@ next-env.d.ts
 folder-structure.md
 
 /app/generated/prisma
+
+*.sql

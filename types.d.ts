@@ -68,6 +68,92 @@ declare global {
     amount: number;
     color?: string; // Grafik rengi için
   }
+
+  type ProjectStatus =
+    | 'WAITING'
+    | 'IN_PROGRESS'
+    | 'COMPLETED'
+    | 'CANCELLED'
+    | 'PAUSED'
+    | 'REVISION_REQUEST';
+  type PaymentStatus = 'UNPAID' | 'PARTIAL' | 'PAID';
+  type TaskStatus = 'TODO' | 'IN_PROGRESS' | 'DONE';
+
+  // --- CLIENT (MÜŞTERİ) ---
+  interface Client {
+    id: string;
+    name: string;
+    description?: string | null;
+    logo?: string | null;
+    userId: string;
+
+    // İlişkiler
+    projects?: Project[];
+
+    createdAt: Date;
+    updatedAt: Date;
+  }
+
+  // --- PROJECT (PROJE) ---
+  interface Project {
+    id: string;
+    name: string;
+    description?: string | null;
+
+    startDate: Date;
+    endDate?: Date | null;
+
+    status: ProjectStatus;
+    paymentStatus: PaymentStatus;
+
+    // Prisma Decimal -> JS number dönüşümü yapılmalı
+    price: number;
+
+    techStack: string[];
+    category: string;
+    meetCount?: number | null; // Yeni eklenen alan
+
+    // Foreign Keys
+    clientId: string;
+    userId: string;
+
+    // İlişkiler (Opsiyonel)
+    client?: Client;
+    revisions?: Revision[];
+    tasks?: Task[];
+    _count?: {
+      tasks: number;
+      revisions: number;
+    };
+
+    createdAt: Date;
+    updatedAt: Date;
+  }
+
+  // --- REVISION (REVİZE) ---
+  interface Revision {
+    id: string;
+    title: string;
+    description?: string | null;
+
+    projectId: string;
+
+    createdAt: Date;
+    updatedAt: Date;
+  }
+
+  // --- TASK (GÖREV - KANBAN) ---
+  interface Task {
+    id: string;
+    title: string;
+    order: number;
+    status: TaskStatus; // Boolean yerine Enum
+
+    projectId: string;
+
+    createdAt: Date;
+    updatedAt: Date;
+  }
 }
 
 // Bu dosyanın bir modül olarak algılanması için boş bir export ekliyoruz
