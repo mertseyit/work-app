@@ -1,6 +1,7 @@
 import prisma from '@/lib/prisma';
 import { auth } from '@clerk/nextjs/server';
 import ClientCard from '../../components/ClientCard';
+import CreateClientProjectSheet from './works/components/CreateClientProjectSheet';
 
 const ClientDetailPage = async ({ params }: { params: Promise<{ clientId: string }> }) => {
   const { clientId } = await params;
@@ -34,10 +35,14 @@ const ClientDetailPage = async ({ params }: { params: Promise<{ clientId: string
       ...project,
       // Prisma Decimal nesnesini JavaScript Number'a çeviriyoruz
       price: project.price.toNumber(),
+      paidAmount: project.price.toNumber(),
     })),
   };
   return (
     <div className="x-container py-6">
+      <div className="flex mb-4 items-center justify-end gap-2">
+        <CreateClientProjectSheet clientId={client.id} />
+      </div>
       <ClientCard showDetailLink={false} client={client} />
     </div>
   );

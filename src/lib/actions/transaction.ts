@@ -48,7 +48,7 @@ export async function deleteTransaction(id: string) {
     });
 
     if (!transaction || transaction.userId !== userId) {
-      return { error: 'İşlem bulunamadı veya silme yetkiniz yok.' };
+      return { error: 'İşlem Yapılamadı' };
     }
 
     await prisma.transaction.delete({

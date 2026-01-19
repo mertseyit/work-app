@@ -76,7 +76,7 @@ const TransactionCard = ({ transaction }: TransactionCardProps) => {
         </div>
       </ContextMenuTrigger>
       <ContextMenuContent>
-        <ContextMenuItem onClick={handleDelete}>Sil</ContextMenuItem>
+        <ContextMenuItem onClick={handleDelete}>{isPending ? 'Siliniyor' : 'Sil'}</ContextMenuItem>
         <ContextMenuItem>Güncelle</ContextMenuItem>
       </ContextMenuContent>
     </ContextMenu>

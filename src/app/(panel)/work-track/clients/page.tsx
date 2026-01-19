@@ -2,6 +2,7 @@ import prisma from '@/lib/prisma';
 import React from 'react';
 import { auth } from '@clerk/nextjs/server';
 import ClientList from './components/ClientList';
+import CreateClientModal from '../components/CreateClientModal';
 
 const ClientsPage = async () => {
   const { userId } = await auth();
@@ -13,6 +14,10 @@ const ClientsPage = async () => {
   });
   return (
     <div className="x-container py-6">
+      <div className="flex items-center justify-between ">
+        <h3 className="text-normal font-semibold">Proje Oluştur</h3>
+        <CreateClientModal />
+      </div>
       <ClientList clients={rawClients} />
     </div>
   );

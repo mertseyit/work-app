@@ -28,6 +28,7 @@ import {
 } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { Calendar } from '@/components/ui/calendar';
+import { useRouter } from 'next/navigation';
 
 // Bileşene prop olarak kategorileri gönderiyoruz
 interface AddNewTransactionProps {
@@ -38,6 +39,7 @@ const AddNewTransaction = ({ categories }: AddNewTransactionProps) => {
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [date, setDate] = useState<undefined | Date>(new Date());
+  const router = useRouter();
   const form = useForm({
     resolver: zodResolver(CreateTransactionSchema),
     defaultValues: {
@@ -66,6 +68,7 @@ const AddNewTransaction = ({ categories }: AddNewTransactionProps) => {
         toast.success('İşlem kaydedildi', {
           position: 'top-center',
         });
+        router.refresh();
         form.reset();
         setOpen(false);
       }

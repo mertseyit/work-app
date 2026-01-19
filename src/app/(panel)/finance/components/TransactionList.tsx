@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import TransactionFilter from './TransactionFilter';
 import TransactionCard from './TransactionCard';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -10,6 +10,11 @@ interface TransactionListPropTypes {
 
 const TransactionList = ({ listTransactions }: TransactionListPropTypes) => {
   const [transactions, setTransactions] = useState<Transaction[]>(listTransactions);
+
+  //veri eklendiği zaman verileri yeniden set et. Bunu koymazsan revalidatePath çalışsa bile veriler client'da güncellenmez.
+  useEffect(() => {
+    setTransactions(listTransactions);
+  }, [listTransactions]);
 
   return (
     <div>

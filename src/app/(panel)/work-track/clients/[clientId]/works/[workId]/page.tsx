@@ -19,7 +19,11 @@ const WorkDetailPage = async ({
     },
     include: {
       client: true,
-      tasks: true,
+      tasks: {
+        orderBy: {
+          order: 'asc',
+        },
+      },
       revisions: true,
     },
   });
@@ -35,6 +39,7 @@ const WorkDetailPage = async ({
   const project = {
     ...rawProject,
     price: rawProject.price.toNumber(),
+    paidAmount: rawProject.paidAmount.toNumber(),
   };
 
   return (
