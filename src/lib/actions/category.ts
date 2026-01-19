@@ -2,18 +2,16 @@
 'use server';
 
 import { auth } from '@clerk/nextjs/server';
-import prisma from '@/lib/prisma'; // Prisma client dosyan
+import prisma from '@/lib/prisma';
 import { CreateCategorySchema, CreateCategorySchemaType } from '@/lib/validators';
 import { revalidatePath } from 'next/cache';
 
 export async function createCategory(form: CreateCategorySchemaType) {
-  // 1. Kullanıcı giriş yapmış mı?
   const { userId } = await auth();
   if (!userId) {
     throw new Error('Yetkisiz erişim. Lütfen giriş yapın.');
   }
 
-  // 2. Gelen veriyi Zod ile doğrula
   const validatedFields = CreateCategorySchema.safeParse(form);
 
   if (!validatedFields.success) {
@@ -23,7 +21,23 @@ export async function createCategory(form: CreateCategorySchemaType) {
   const { name, type } = validatedFields.data;
 
   try {
-    // 3. Veritabanına kaydet
+    // Aynı kategori var mı kontrol et
+    const existingCategory = await prisma.category.findUnique({
+      where: {
+        userId_name_type: {
+          userId,
+          name,
+          type,
+        },
+      },
+    });
+
+    if (existingCategory) {
+      return {
+        error: `"${name}" adında bir ${type === 'INCOME' ? 'gelir' : 'gider'} kategorisi zaten mevcut.`,
+      };
+    }
+
     await prisma.category.create({
       data: {
         userId,
@@ -32,9 +46,7 @@ export async function createCategory(form: CreateCategorySchemaType) {
       },
     });
 
-    // 4. Sayfayı yenile (Yeni kategori listeye düşsün)
     revalidatePath('/finance');
-
     return { success: true };
   } catch (error) {
     console.error('Kategori oluşturma hatası:', error);
@@ -52,13 +64,8 @@ export async function deleteCategory(id: string) {
     });
 
     if (!category || category.userId !== userId) {
-      return { error: 'İşlem bulunamadı veya silme yetkiniz yok.' };
+      return { error: 'İşlem Yapılamadı' };
     }
-
-    //ilişkisel verileri silerken, o ilişkiye sahip diğer verileri de manuel sil.
-    await prisma.transaction.deleteMany({
-      where: { categoryId: id },
-    });
 
     await prisma.category.delete({
       where: { id },

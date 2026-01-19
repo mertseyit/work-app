@@ -5,6 +5,7 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { ClerkProvider } from '@clerk/nextjs';
 import { trTR } from '@clerk/localizations';
 import { Toaster } from '@/components/ui/sonner';
+import { TooltipProvider } from '@/components/ui/tooltip';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -29,17 +30,19 @@ export default function RootLayout({
   return (
     <ClerkProvider localization={trTR}>
       <html lang="en" suppressHydrationWarning>
-        <body className={`${geistSans.variable}  ${geistMono.variable} antialiased`}>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            {children}
-          </ThemeProvider>
-          <Toaster />
-        </body>
+        <TooltipProvider>
+          <body className={`${geistSans.variable}  ${geistMono.variable} antialiased`}>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              {children}
+            </ThemeProvider>
+            <Toaster />
+          </body>
+        </TooltipProvider>
       </html>
     </ClerkProvider>
   );

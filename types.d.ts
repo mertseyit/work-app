@@ -1,7 +1,4 @@
 // src/types.d.ts
-
-import { TransactionType as PrismaTransactionType } from '@prisma/client';
-
 declare global {
   type TransactionType = 'INCOME' | 'EXPENSE';
 
@@ -71,7 +68,7 @@ declare global {
 
   type ProjectStatus =
     | 'WAITING'
-    | 'IN_PROGRESS'
+    | 'IN_PROGRESS' // devam ediyor anlamında değil, çalışılıyor anlamında kullanılıyor.
     | 'COMPLETED'
     | 'CANCELLED'
     | 'PAUSED'
@@ -108,15 +105,13 @@ declare global {
 
     // Prisma Decimal -> JS number dönüşümü yapılmalı
     price: number;
+    paidAmount: number;
 
     techStack: string[];
-    category: string;
-    meetCount?: number | null; // Yeni eklenen alan
-
+    category?: string | null;
     // Foreign Keys
     clientId: string;
     userId: string;
-
     // İlişkiler (Opsiyonel)
     client?: Client;
     revisions?: Revision[];

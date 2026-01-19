@@ -1,6 +1,7 @@
 import prisma from '@/lib/prisma';
 import { auth } from '@clerk/nextjs/server';
 import ClientCard from './components/ClientCard';
+import CreateClientModal from './components/CreateClientModal';
 
 const WorkTrackPage = async () => {
   const { userId } = await auth();
@@ -26,11 +27,15 @@ const WorkTrackPage = async () => {
       ...project,
       // Prisma Decimal nesnesini JavaScript Number'a çeviriyoruz
       price: project.price.toNumber(),
+      paidAmount: project.paidAmount.toNumber(),
     })),
   }));
   return (
-    <div className="grid grid-cols-8 gap-4 x-container py-3">
-      <h3 className="col-span-8 font-semibold">Ana Sayfa</h3>
+    <div className="grid grid-cols-8 gap-4 x-container py-6">
+      <div className="col-span-8 flex items-center justify-between ">
+        <h3 className="text-normal font-semibold">Ana Sayfa</h3>
+        <CreateClientModal />
+      </div>
       <div className="lg:col-span-6 col-span-8">
         {clients.map((client) => (
           <ClientCard key={client.id} client={client} />

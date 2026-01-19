@@ -7,15 +7,17 @@ datasource db {
 }
 model User {
   id              String   @id 
-  email           String   @unique
-  firstName       String?
-  lastName        String?
-  imageUrl        String?
+  email           String   @unique @db.VarChar(255)
+  firstName       String?  @db.VarChar(50)
+  lastName        String?  @db.VarChar(50)
+  imageUrl        String?  @db.VarChar(500)
   
   transactions    Transaction[] //many to many 
   categories      Category[] //many to many 
   clients         Client[]
   projects        Project[]
+  revisions       Revision[]
+  tasks           Task[]
 
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
@@ -26,7 +28,7 @@ model User {
 //İşlem kategorisi
 model Category {
   id      String          @id @default(uuid())
-  name    String
+  name    String          @db.VarChar(50)
   type    TransactionType
   
   userId  String
@@ -36,7 +38,7 @@ model Category {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
+  @@unique([userId, name, type])
   @@map("categories")
 }
 
@@ -46,14 +48,14 @@ model Transaction {
   amount      Decimal         @db.Decimal(10, 2)
   type        TransactionType
   date        DateTime
-  description String?
-  title       String
+  description String?         @db.VarChar(500)
+  title       String          @db.VarChar(100)
   userId      String
   user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   // İlişki: Hangi kategori?
   categoryId  String
-  category    Category        @relation(fields: [categoryId], references: [id])
+  category    Category        @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
@@ -66,9 +68,9 @@ model Transaction {
 // 1. MÜŞTERİ / KURUM (CLIENT)
 model Client {
   id          String   @id @default(uuid())
-  name        String   // Kurum/Kişi Adı
-  description String?  // Açıklama
-  logo        String?  // Logo URL (Şimdilik null)
+  name        String   @db.VarChar(100) // Kurum/Kişi Adı
+  description String?  @db.VarChar(1000) // Açıklama
+  logo        String?  @db.VarChar(500) // Logo URL (Şimdilik null)
   
   // İlişkiler
   userId      String
@@ -85,12 +87,12 @@ model Client {
 // 2. PROJE (PROJECT)
 model Project {
   id          String        @id @default(uuid())
-  name        String
-  description String?
+  name        String        @db.VarChar(150)
+  description String?       @db.VarChar(2000)
   
   // Tarihler
   startDate   DateTime      @default(now()) // Seçilmezse o anın tarihi
-  endDate     DateTime?     // Opsiyonel deadline
+  endDate     DateTime     // Opsiyonel deadline
   
   // Durumlar
   status        ProjectStatus @default(WAITING)
@@ -98,14 +100,13 @@ model Project {
   
   // Finansal
   price         Decimal       @db.Decimal(10, 2)
-  
+  paidAmount    Decimal       @default(0) @db.Decimal(10, 2)
   // Teknik
-  techStack     String[]      // Örn: ["Next.js", "Prisma", "Tailwind"]
-  category      String        // Örn: "E-Ticaret", "Kurumsal Site"
-  
+  techStack     String[]      @db.VarChar(50) // Örn: ["Next.js", "Prisma", "Tailwind"]
+  category      String?       @db.VarChar(50) // Örn: "E-Ticaret", "Kurumsal Site"
   // İlişkiler
   clientId    String
-  client      Client        @relation(fields: [clientId], references: [id])
+  client      Client        @relation(fields: [clientId], references: [id], onDelete: Cascade)
   
   userId      String
   user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -113,8 +114,6 @@ model Project {
   // Alt Tablolar
   revisions   Revision[]
   tasks       Task[]
-  //tamamen veri tutma amaçlı kullanıcı eğer isterse bir iş için totalde kaç kez meet yapmış saymak için
-  meetCount   Int?  @default(0)
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 
@@ -123,14 +122,17 @@ model Project {
 
 // 3. REVİZELER (REVISIONS)
 // Müşteriden gelen değişiklik istekleri
+
+//TODO (mert): userId alanı gerekiyor.
 model Revision {
   id          String   @id @default(uuid())
-  title       String
-  description String?  // Link veya notlar buraya
+  title       String   @db.VarChar(200)
+  description String?  @db.VarChar(1000) // Link veya notlar buraya
   
   projectId   String
   project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -139,7 +141,7 @@ model Revision {
 
 model Task {
   id          String      @id @default(uuid())
-  title       String
+  title       String      @db.VarChar(200)
   order       Int         @default(0) // Kanban'da kart sırasını tutmak için kritik!
 
   //kanban grafik yapısı için burası TaskStatus türünde atandı.  
@@ -147,6 +149,9 @@ model Task {
   
   projectId   String
   project     Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  userId   String
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
@@ -164,7 +169,7 @@ enum TaskStatus {
 // ENUMLAR (Standart Veri İçin)
 enum ProjectStatus {
   WAITING           // Beklemede
-  IN_PROGRESS       // Devam Ediyor
+  IN_PROGRESS       // Devam Ediyor (devam ediyor anlamında değil, çalışılıyor anlamında kullanılıyor.)
   COMPLETED         // Tamamlandı
   CANCELLED         // İptal
   PAUSED            // Duraklatıldı
