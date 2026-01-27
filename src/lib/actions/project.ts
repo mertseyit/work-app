@@ -1,12 +1,12 @@
 'use server';
 
 import { auth } from '@clerk/nextjs/server';
-import { CreateClientProjectSchema, CreateClientProjectType } from '../validators';
+import { CreateClientProjectSchema, CreateClientProjectSchemaType } from '../validators';
 import prisma from '../prisma';
 import { revalidatePath } from 'next/cache';
 import { ProjectStatus } from '@prisma/client';
 
-export async function createClientProject(form: CreateClientProjectType) {
+export async function createClientProject(form: CreateClientProjectSchemaType) {
   const { userId } = await auth();
   if (!userId) throw new Error('Yetkisiz erişim.');
 
@@ -90,7 +90,10 @@ export async function createClientProject(form: CreateClientProjectType) {
   }
 }
 
-export async function updateClientProject(id: string, data: Partial<CreateClientProjectType>) {
+export async function updateClientProject(
+  id: string,
+  data: Partial<CreateClientProjectSchemaType>,
+) {
   const { userId } = await auth();
   if (!userId) throw new Error('Yetkisiz erişim.');
 

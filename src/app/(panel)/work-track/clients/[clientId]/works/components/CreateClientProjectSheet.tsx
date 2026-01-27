@@ -3,7 +3,7 @@
 import { useState, useTransition, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { CreateClientProjectSchema, CreateClientProjectType } from '@/lib/validators';
+import { CreateClientProjectSchema, CreateClientProjectSchemaType } from '@/lib/validators';
 import { tr } from 'date-fns/locale';
 import { Button } from '@/components/ui/button';
 import {
@@ -41,7 +41,7 @@ const CreateClientProjectSheet = ({ clientId }: CreateClientProjectSheetProps) =
   const [partialMode, setPartialMode] = useState<'amount' | 'percent'>('amount');
   const [partialPercent, setPartialPercent] = useState<number>(0);
 
-  const form = useForm<CreateClientProjectType>({
+  const form = useForm<CreateClientProjectSchemaType>({
     resolver: zodResolver(CreateClientProjectSchema),
     defaultValues: {
       name: '',
@@ -89,7 +89,7 @@ const CreateClientProjectSheet = ({ clientId }: CreateClientProjectSheetProps) =
     }
   };
 
-  const onSubmit = (data: CreateClientProjectType) => {
+  const onSubmit = (data: CreateClientProjectSchemaType) => {
     // paidAmount > 0 ise paymentStatus'u PARTIAL yap
     if (data.paidAmount > 0 && data.paidAmount < data.price) {
       data.paymentStatus = 'PARTIAL';

@@ -3,9 +3,9 @@
 import prisma from '@/lib/prisma';
 import { auth } from '@clerk/nextjs/server';
 import { revalidatePath } from 'next/cache';
-import { CreateTaskSchema, CreateTaskType } from '../validators';
+import { CreateTaskSchema, CreateTaskSchemaType } from '../validators';
 
-export async function createTask(data: CreateTaskType, projectId: string) {
+export async function createTask(data: CreateTaskSchemaType, projectId: string) {
   const { userId } = await auth();
 
   if (!userId) throw new Error('Yetkisiz erişim.');

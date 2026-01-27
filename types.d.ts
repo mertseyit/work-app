@@ -1,6 +1,16 @@
 // src/types.d.ts
 declare global {
   type TransactionType = 'INCOME' | 'EXPENSE';
+  type RecurrenceType = 'DAILY' | 'WEEKDAYS' | 'WEEKLY' | 'MONTHLY' | 'YEARLY' | 'CUSTOM';
+  type ProjectStatus =
+    | 'WAITING'
+    | 'IN_PROGRESS' // devam ediyor anlamında değil, çalışılıyor anlamında kullanılıyor.
+    | 'COMPLETED'
+    | 'CANCELLED'
+    | 'PAUSED'
+    | 'REVISION_REQUEST';
+  type PaymentStatus = 'UNPAID' | 'PARTIAL' | 'PAID';
+  type TaskStatus = 'TODO' | 'IN_PROGRESS' | 'DONE';
 
   interface User {
     id: string; // Clerk ID (user_2bS...)
@@ -66,16 +76,6 @@ declare global {
     color?: string; // Grafik rengi için
   }
 
-  type ProjectStatus =
-    | 'WAITING'
-    | 'IN_PROGRESS' // devam ediyor anlamında değil, çalışılıyor anlamında kullanılıyor.
-    | 'COMPLETED'
-    | 'CANCELLED'
-    | 'PAUSED'
-    | 'REVISION_REQUEST';
-  type PaymentStatus = 'UNPAID' | 'PARTIAL' | 'PAID';
-  type TaskStatus = 'TODO' | 'IN_PROGRESS' | 'DONE';
-
   // --- CLIENT (MÜŞTERİ) ---
   interface Client {
     id: string;
@@ -116,6 +116,7 @@ declare global {
     client?: Client;
     revisions?: Revision[];
     tasks?: Task[];
+    notes?: Note[];
     _count?: {
       tasks: number;
       revisions: number;
@@ -148,6 +149,50 @@ declare global {
 
     createdAt: Date;
     updatedAt: Date;
+  }
+
+  interface Note {
+    id: string;
+    title: string;
+    isImportant: boolean;
+    isCompleted: boolean;
+
+    // Hatırlatıcı
+    remindAt: Date | null;
+
+    // Son tarih (Due Date) - YENİ
+    dueDate: Date | null;
+
+    // Tekrarlama
+    recurrenceType: RecurrenceType | null;
+    recurrenceInterval: number | null;
+
+    // İlişkiler
+    listId: string | null;
+    list?: NoteList;
+
+    userId: string;
+
+    projectId: string | null;
+    project?: Project;
+
+    // Zaman damgaları
+    createdAt: Date;
+    updatedAt: Date;
+  }
+
+  interface NoteList {
+    id: string;
+    title: string;
+    description: string | null;
+    color: string;
+    userId: string;
+    createdAt: Date;
+    updatedAt: Date;
+    _count?: {
+      notes: number;
+    };
+    notes?: Note[];
   }
 }
 

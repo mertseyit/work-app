@@ -10,6 +10,14 @@ const ProjectStatusEnum = z.enum([
   'REVISION_REQUEST',
 ]);
 const PaymentStatusEnum = z.enum(['UNPAID', 'PARTIAL', 'PAID']);
+export const RecurrenceTypeEnum = z.enum([
+  'DAILY',
+  'WEEKDAYS',
+  'WEEKLY',
+  'MONTHLY',
+  'YEARLY',
+  'CUSTOM',
+]);
 
 //finansal işlem kategori
 export const CreateCategorySchema = z.object({
@@ -105,8 +113,72 @@ export const CreateTaskSchema = z.object({
     .max(200, { message: 'Başlık en fazla 200 karakter olabilir.' }),
 });
 
+export const CreateListSchema = z.object({
+  title: z
+    .string()
+    .min(2, { message: 'Liste adı en az 2 karakter olmalı.' })
+    .max(50, { message: 'Liste adı en fazla 50 karakter olabilir.' }),
+  description: z
+    .string()
+    .min(2, { error: 'Açıklama en az 2 karakter olmalı' })
+    .max(300, { error: 'Açıklama en fazla 300 karakter olabilir.' })
+    .optional(),
+  color: z.string().optional(),
+});
+
+export const CreateNoteSchema = z
+  .object({
+    title: z
+      .string()
+      .min(2, { message: 'Not en az 2 karakter olmalı.' })
+      .max(400, { message: 'Not en fazla 400 karakter olabilir.' }),
+
+    // Boolean alanlar - zorunlu (default yok, form'da set edilecek)
+    isImportant: z.boolean(),
+    isCompleted: z.boolean(),
+
+    // Hatırlatıcı - belirli bir tarih/saat
+    remindAt: z.date().nullable().optional(),
+
+    // Son tarih (Due Date)
+    dueDate: z.date().nullable().optional(),
+
+    // Tekrarlama ayarları
+    recurrenceType: RecurrenceTypeEnum.nullable().optional(),
+    recurrenceInterval: z
+      .number()
+      .int()
+      .min(1, { message: 'Tekrar aralığı en az 1 olmalı.' })
+      .max(365, { message: 'Tekrar aralığı en fazla 365 olabilir.' })
+      .nullable()
+      .optional(),
+
+    // İlişkiler - uuid validasyonu kaldırıldı (Prisma zaten kontrol ediyor)
+    listId: z.string().nullable().optional(),
+    projectId: z.string().nullable().optional(),
+  })
+  .refine(
+    (data) => {
+      // Eğer recurrenceType CUSTOM ise, recurrenceInterval zorunlu
+      if (data.recurrenceType === 'CUSTOM') {
+        return data.recurrenceInterval !== null && data.recurrenceInterval !== undefined;
+      }
+      return true;
+    },
+    {
+      message: 'Özel tekrarlama seçildiğinde tekrar aralığı zorunludur.',
+      path: ['recurrenceInterval'],
+    },
+  );
+export const UpdateNoteSchema = CreateNoteSchema.extend({
+  id: z.string(),
+});
+
 export type CreateCategorySchemaType = z.infer<typeof CreateCategorySchema>;
 export type CreateTransactionSchemaType = z.infer<typeof CreateTransactionSchema>;
 export type CreateClientSchemaType = z.infer<typeof CreateClientSchema>;
-export type CreateClientProjectType = z.infer<typeof CreateClientProjectSchema>;
-export type CreateTaskType = z.infer<typeof CreateTaskSchema>;
+export type CreateClientProjectSchemaType = z.infer<typeof CreateClientProjectSchema>;
+export type CreateTaskSchemaType = z.infer<typeof CreateTaskSchema>;
+export type CreateListSchemaType = z.infer<typeof CreateListSchema>;
+export type CreateNoteSchemaType = z.infer<typeof CreateNoteSchema>;
+export type UpdateNoteSchemaType = z.infer<typeof UpdateNoteSchema>;

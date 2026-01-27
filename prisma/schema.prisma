@@ -18,6 +18,8 @@ model User {
   projects        Project[]
   revisions       Revision[]
   tasks           Task[]
+  noteLists       NoteList[]
+  notes           Note[]
 
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
@@ -104,6 +106,7 @@ model Project {
   // Teknik
   techStack     String[]      @db.VarChar(50) // Örn: ["Next.js", "Prisma", "Tailwind"]
   category      String?       @db.VarChar(50) // Örn: "E-Ticaret", "Kurumsal Site"
+  notes         Note[]
   // İlişkiler
   clientId    String
   client      Client        @relation(fields: [clientId], references: [id], onDelete: Cascade)
@@ -123,7 +126,6 @@ model Project {
 // 3. REVİZELER (REVISIONS)
 // Müşteriden gelen değişiklik istekleri
 
-//TODO (mert): userId alanı gerekiyor.
 model Revision {
   id          String   @id @default(uuid())
   title       String   @db.VarChar(200)
@@ -157,6 +159,67 @@ model Task {
   updatedAt   DateTime    @updatedAt
 
   @@map("tasks")
+}
+
+model NoteList {
+  id          String   @id @default(uuid())
+  title       String   @db.VarChar(100)
+  description String?  @db.VarChar(500)
+  color       String   @default("#2563eb") @db.VarChar(20) // Default: Blue
+  
+  // İlişkiler
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  notes       Note[]   // Bu listeye ait notlar
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("note_lists")
+}
+
+// 2. NOTLAR (Görevler)
+model Note {
+  id          String   @id @default(uuid())
+  title       String   @db.VarChar(500)
+  
+  isImportant Boolean  @default(false)
+  isCompleted Boolean  @default(false)
+  
+  // 📌 HATIRLATICI (Remind Me) - Tek seferlik bildirim
+  remindAt    DateTime? // Hatırlatıcı tarihi ve saati
+  
+  // 📌 SON TARİH (Due Date) - Görevin bitiş tarihi
+  dueDate     DateTime? // Teslim tarihi
+  
+  // 📌 TEKRARLAMA (Repeat) - Görev tamamlandığında yeniden oluştur
+  recurrenceType     RecurrenceType?
+  recurrenceInterval Int?            @default(1) // Her kaç günde/haftada bir
+
+  listId      String?
+  list        NoteList? @relation(fields: [listId], references: [id], onDelete: Cascade)
+  
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  projectId   String?
+  project     Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("notes")
+}
+
+// Tekrarlama Türleri (Microsoft To-Do ile aynı)
+enum RecurrenceType {
+  DAILY       // Her gün
+  WEEKDAYS    // Hafta içi her gün (Pzt-Cum)
+  WEEKLY      // Her hafta
+  MONTHLY     // Her ay
+  YEARLY      // Her yıl
+  CUSTOM      // Özel (interval ile birlikte)
 }
 
 // Kanban Sütunları için Enum

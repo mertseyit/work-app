@@ -1,6 +1,6 @@
 'use client';
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Ellipsis, Eye, Trash2 } from 'lucide-react';
+import { Ellipsis, Eye, Link2, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import ProjectCard from './ProjectCard';
 import {
@@ -55,18 +55,17 @@ const ClientCard = ({ client, showDetailLink = true }: ClientCardProps) => {
     <Card className="mb-5">
       <CardHeader>
         <CardTitle className="text-base flex items-center justify-between w-full">
-          <div className="flex items-center justify-start gap-3">
-            {client.name}
-            {showDetailLink && (
-              <Link
-                href={`/work-track/clients/${client.id}`}
-                className="text-xs flex items-center justify-end gap-1 font-semibold"
-              >
-                <Eye size={12} />
-                Detay
-              </Link>
-            )}
-          </div>
+          {showDetailLink ? (
+            <Link
+              href={`/work-track/clients/${client.id}`}
+              className=" flex items-center justify-end gap-1 font-semibold"
+            >
+              <Link2 />
+              {client.name}
+            </Link>
+          ) : (
+            <>{client.name}</>
+          )}
           <DropdownMenu>
             <DropdownMenuTrigger asChild className="ms-auto">
               <Button size={'icon-sm'} variant={'ghost'}>
