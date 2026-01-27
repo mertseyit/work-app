@@ -14,6 +14,7 @@ import formatPaymentStatus from '@/helpers/formatPaymentStatus';
 import formatProjectStatus from '@/helpers/formatProjectStatus';
 import { getDeadlineStatus } from '@/helpers/getDeadLineStatus';
 import {
+  ArrowRight,
   BadgeTurkishLira,
   CalendarClock,
   ChevronsLeftRight,
@@ -47,11 +48,15 @@ import { toast } from 'sonner';
 import { deleteClientProject } from '@/lib/actions/project';
 import { useRouter } from 'next/navigation';
 import UpdateClientProjectModal from './UpdateClientProjectModal';
+import CreateNewNoteInput from '@/app/(panel)/note/components/CreateNewNoteInput';
+import NoteItem from '@/app/(panel)/note/components/NoteItem';
+import { ScrollArea } from '@/components/ui/scroll-area';
 interface WorkDetailCardProps {
   project: Project;
+  noteList: { id: string; title: string }[];
 }
 
-const WorkDetailCard = ({ project }: WorkDetailCardProps) => {
+const WorkDetailCard = ({ project, noteList }: WorkDetailCardProps) => {
   const router = useRouter();
   const paymentStatus = formatPaymentStatus(project.paymentStatus);
   const projectStatus = formatProjectStatus(project.status);
@@ -177,7 +182,8 @@ const WorkDetailCard = ({ project }: WorkDetailCardProps) => {
               </div>
             </div>
             <Separator className="my-5" />
-            <span className="font-semibold block mb-3">İş Detay</span>
+            <h5 className="font-semibold block ">İş Detay</h5>
+            <Separator className="my-3" />
             <div className="grid grid-cols-6 w-full justify-between items-center gap-y-5">
               <span className="font-semibold col-span-3 text-sm">Müşteri: </span>
               <Link
@@ -230,6 +236,32 @@ const WorkDetailCard = ({ project }: WorkDetailCardProps) => {
                 )}
               </div>
             </div>
+            <div className="flex items-center justify-between mt-8">
+              <h5 className="font-semibold block ">İlişkili Notlar</h5>
+              <Link
+                href={'/notes'}
+                className="text-xs font-semibold flex items-center justify-end gap-2"
+              >
+                Tüm Notlarım <ArrowRight size={12} />
+              </Link>
+            </div>
+            <Separator className="my-3" />
+            {project.notes?.length !== 0 ? (
+              <ScrollArea className="h-[240px]">
+                {project.notes?.map((note) => (
+                  <NoteItem key={note.id} note={note} selectedColor="" />
+                ))}
+              </ScrollArea>
+            ) : (
+              <p className="text-xs text-accent-foreground my-3">Henüz hiç notunuz bulunmamakta</p>
+            )}
+            <div className="bg-background w-full mt-3">
+              <CreateNewNoteInput
+                noteList={noteList}
+                projectList={[{ ...project }]}
+                selectDefaultProject={true}
+              />
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -259,7 +291,7 @@ const WorkDetailCard = ({ project }: WorkDetailCardProps) => {
             {['COMPLETED', 'CANCELLED', 'PAUSED'].includes(project.status) ? (
               <div className="border border-dashed border-green-600/40 p-4 rounded-lg">
                 <p className="text-sm">
-                  Bu projenin durumunu{' '}
+                  Bu projenin durumunu
                   <b style={{ color: projectStatus.iconColor }}>{projectStatus.label}</b> olarak
                   işaretlediniz. Artık bu proje için görev tanımlaması yapamazsanız.
                 </p>

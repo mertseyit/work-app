@@ -3,7 +3,7 @@
 import { useState, useTransition, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { CreateClientProjectSchema, CreateClientProjectType } from '@/lib/validators';
+import { CreateClientProjectSchema, CreateClientProjectSchemaType } from '@/lib/validators';
 import { tr } from 'date-fns/locale';
 import { Button } from '@/components/ui/button';
 import {
@@ -49,7 +49,7 @@ const UpdateClientProjectModal = ({ project }: UpdateClientProjectModalProps) =>
   const [partialMode, setPartialMode] = useState<'amount' | 'percent'>('amount');
   const [partialPercent, setPartialPercent] = useState<number>(0);
 
-  const form = useForm<CreateClientProjectType>({
+  const form = useForm<CreateClientProjectSchemaType>({
     resolver: zodResolver(CreateClientProjectSchema),
     defaultValues: {
       name: project.name,
@@ -141,7 +141,7 @@ const UpdateClientProjectModal = ({ project }: UpdateClientProjectModalProps) =>
     // PARTIAL için kullanıcı manuel girecek
   };
 
-  const onSubmit = (data: CreateClientProjectType) => {
+  const onSubmit = (data: CreateClientProjectSchemaType) => {
     // paidAmount'a göre paymentStatus'u otomatik ayarla
     if (data.paidAmount === 0) {
       data.paymentStatus = 'UNPAID';
@@ -436,7 +436,7 @@ const UpdateClientProjectModal = ({ project }: UpdateClientProjectModalProps) =>
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="WAITING">Beklemede</SelectItem>
-                  <SelectItem value="IN_PROGRESS">Devam Ediyor</SelectItem>
+                  <SelectItem value="IN_PROGRESS">Çalışılıyor</SelectItem>
                   <SelectItem value="COMPLETED">Tamamlandı</SelectItem>
                   <SelectItem value="CANCELLED">İptal Edildi</SelectItem>
                   <SelectItem value="PAUSED">Durduruldu</SelectItem>

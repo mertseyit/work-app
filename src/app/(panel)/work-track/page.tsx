@@ -37,9 +37,17 @@ const WorkTrackPage = async () => {
         <CreateClientModal />
       </div>
       <div className="lg:col-span-6 col-span-8">
-        {clients.map((client) => (
-          <ClientCard key={client.id} client={client} />
-        ))}
+        {clients.length === 0 ? (
+          <div className="flex items-center justify-center p-3 rounded-lg border border-dashed">
+            <p className="text-xs font-semibold text-center">Henüz kayıt yok</p>
+          </div>
+        ) : (
+          <>
+            {clients.map((client) => (
+              <ClientCard key={client.id} client={client} />
+            ))}
+          </>
+        )}
       </div>
       <div className="lg:col-span-2 col-span-8 border rounded-2xl p-3"></div>
     </div>

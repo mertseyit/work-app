@@ -39,7 +39,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { CreateTaskSchema, CreateTaskType } from '@/lib/validators';
+import { CreateTaskSchema, CreateTaskSchemaType } from '@/lib/validators';
 import { Button } from '@/components/ui/button';
 
 const STATUS_STYLES: Record<TaskStatus, { header: string; card: string; cardBorder: string }> = {
@@ -286,14 +286,14 @@ export default function KanbanBoard({
   const doneTasks = useMemo(() => tasks.filter((t) => t.status === 'DONE'), [tasks]);
 
   const [isPending, startTransition] = useTransition();
-  const form = useForm<CreateTaskType>({
+  const form = useForm<CreateTaskSchemaType>({
     resolver: zodResolver(CreateTaskSchema),
     defaultValues: {
       title: '',
     },
   });
 
-  const onSubmit = (data: CreateTaskType) => {
+  const onSubmit = (data: CreateTaskSchemaType) => {
     startTransition(async () => {
       const response = await createTask(data, projectId);
       if (response.error) {

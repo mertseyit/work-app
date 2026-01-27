@@ -1,6 +1,6 @@
 'use client';
 
-import { BadgeTurkishLira, BriefcaseBusiness, ClipboardList } from 'lucide-react';
+import { BadgeTurkishLira, BriefcaseBusiness, ClipboardList, NotebookPen } from 'lucide-react';
 
 import {
   Sidebar,
@@ -66,9 +66,6 @@ const PanelSidebar = () => {
 
               {/* --- 2. MENÜ: İŞ TAKİP (ACCORDION / SUB-MENU) --- */}
               <SidebarMenuItem>
-                {/* defaultValue: Sayfa yenilendiğinde eğer bu menünün altındaysak açık kalsın.
-                    type="single" collapsible: Standart accordion davranışı.
-                */}
                 <Accordion
                   type="single"
                   collapsible
@@ -122,11 +119,11 @@ const PanelSidebar = () => {
               <SidebarMenuItem>
                 <SidebarMenuButton
                   asChild
-                  className={cn(menuButtonBaseClass, isParentActive('/task-list') && activeClass)}
+                  className={cn(menuButtonBaseClass, isParentActive('/not') && activeClass)}
                 >
-                  <Link href="/task-list">
-                    <ClipboardList />
-                    <span className="text-xs font-semibold">Görev Listesi</span>
+                  <Link href="/note">
+                    <NotebookPen />
+                    <span className="text-xs font-semibold">Notlarım</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>

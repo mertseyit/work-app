@@ -24,8 +24,18 @@ const WorkDetailPage = async ({
           order: 'asc',
         },
       },
+      notes: true,
       revisions: true,
     },
+  });
+
+  const noteList = await prisma.noteList.findMany({
+    where: { userId: userId! },
+    select: {
+      id: true,
+      title: true,
+    },
+    orderBy: { createdAt: 'desc' },
   });
 
   if (!rawProject) {
@@ -44,7 +54,7 @@ const WorkDetailPage = async ({
 
   return (
     <div className="x-container py-6">
-      <WorkDetailCard project={project} />
+      <WorkDetailCard noteList={noteList} project={project} />
     </div>
   );
 };
