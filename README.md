@@ -2,6 +2,8 @@
 
 Bu proje, freelance çalışanların iş süreçlerini takip etmelerini, müşteri yönetimini sağlamalarını ve finansal süreçlerini (gelir-gider) tek bir panelden yönetmelerini sağlayan bir web uygulamasıdır.
 
+![alt text](2.png)
+
 ## Kurulum Rehberi
 
 Projeyi yerel makinenizde çalıştırmak için aşağıdaki adımları takip edebilirsiniz.
@@ -35,7 +37,7 @@ yarn install
 
 ### 4. Ortam Değişkenlerinin Tanımlanması (Environment Variables)
 
-.env_exp dosyasını proje root kısmında .env olarak adlandırın ve içerisindeki verileri kendi bilgilerini ile dolduru.
+.env_exp dosyasını proje root kısmında .env olarak adlandırın ve içerisindeki verileri kendi bilgilerini ile dolduru."
 
 NOT 1: Bu projede kullanıcı doğrulaması kısmında clerk kullanılmıştır. Bir clerk projesinin nasıl başlatılacağı hakkında bilgi almak için [resmi dökümana başvurabilirsiniz.](https://clerk.com/docs/nextjs/getting-started/quickstart)
 
